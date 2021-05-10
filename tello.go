@@ -623,12 +623,16 @@ func (tello *Tello) sendOfficialCommand(commandString string) {
 	defer tello.ctrlMu.Unlock()
 	// create the command packet
 
+	if !tello.ControlConnected() {
+		log.Printf("not connected... cannot issue command\n")
+	}
 	// set Command mode TODO MOVE
 	_, err := tello.ctrlConn.Write([]byte("command"))
 
 	log.Printf("[CTRL] set command mode\n")
+
 	// set SDK mode, mission ON.
-	_, err = tello.ctrlConn.Write([]byte("commandString"))
+	_, err = tello.ctrlConn.Write([]byte(commandString))
 	checkError(err)
 	log.Printf("[CTRL] set command mode\n")
 
