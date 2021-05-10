@@ -1,5 +1,9 @@
 // tello.go
 
+// Copyright (C) 2021 Jeroen Stolp
+
+// Modifications apply!
+
 // Copyright (C) 2018  Steve Merrony
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,8 +28,10 @@ package tello
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"log"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -33,7 +39,7 @@ import (
 )
 
 // TelloPackageVersion holds the semver of this package release.
-const TelloPackageVersion = "v0.9.4" // TODO Update with each release
+const TelloPackageVersion = "v0.9.5" // TODO Update with each release
 
 const (
 	defaultTelloAddr        = "192.168.10.1"
@@ -610,6 +616,40 @@ func jsInt16ToTello(sv int16) uint64 {
 	//return uint64((sv / 90) + 1024)
 	// Changed this as new info (Oct 18) suggests range should be 364 to 1684...
 	return uint64(float32(sv)/49.672 + 1024)
+}
+
+func (tello *Tello) sendOfficialCommand(commandString string) {
+	tello.ctrlMu.Lock()
+	defer tello.ctrlMu.Unlock()
+	// create the command packet
+
+	// set Command mode TODO MOVE
+	_, err := tello.ctrlConn.Write([]byte("command"))
+
+	log.Printf("[CTRL] set command mode\n")
+	// set SDK mode, mission ON.
+	_, err = tello.ctrlConn.Write([]byte("commandString"))
+	checkError(err)
+	log.Printf("[CTRL] set command mode\n")
+
+	var buf [512]byte
+	n, err := tello.ctrlConn.Read(buf[0:])
+	checkError(err)
+
+	fmt.Println(string(buf[0:n]))
+
+	checkError(err)
+
+	// log.Printf("Stick Vals: Lx: %d, Ly: %d, Rx: %d, Ry: %d - Stick packet: %x\n",
+	//	tello.ctrlLx, tello.ctrlLy, tello.ctrlRx, tello.ctrlRy, buff)
+
+}
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fatal error ", err.Error())
+		os.Exit(1)
+	}
 }
 
 func (tello *Tello) sendStickUpdate() {
