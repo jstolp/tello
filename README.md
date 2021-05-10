@@ -1,6 +1,7 @@
-# tello Go Package
+# Jtello Go Package
 This tello package provides an unofficial, easy-to-use, standalone API for the Ryze Tello® drone.
 
+Forked from SMerrony/tello (v0.9.3 @ 2021-05-10 ) by jstolp
 ## Disclaimer
 
 Tello is a registered trademark of Ryze Tech.  The author of this package is in no way affiliated with Ryze, DJI, or Intel.  
