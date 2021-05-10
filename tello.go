@@ -618,7 +618,7 @@ func jsInt16ToTello(sv int16) uint64 {
 	return uint64(float32(sv)/49.672 + 1024)
 }
 
-func (tello *Tello) sendOfficialCommand(commandString string) {
+func (tello *Tello) SendOfficialCommand(commandString string) {
 	tello.ctrlMu.Lock()
 	defer tello.ctrlMu.Unlock()
 	// create the command packet
